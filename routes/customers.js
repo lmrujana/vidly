@@ -102,7 +102,7 @@ router.post("/:id", async (req, res) => {
 
 //DELETE
 router.delete("/:id", async (req, res) => {
-  const customer = await Customer.findOneAndDelete(req.params.id);
+  const customer = await Customer.findByIdAndDelete(req.params.id);
 
   if (!customer)
     res.status(404).send(`No customer with id ${req.body.id} found...`);
