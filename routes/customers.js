@@ -1,40 +1,6 @@
 const express = require("express");
-const Joi = require("joi");
 const mongoose = require("mongoose");
-
-const validateCutomer = (customer) => {
-  const customerSchema = Joi.object({
-    name: Joi.string().min(5).max(50)required(),
-    phone: Joi.string()
-      .min(10)
-      .required()
-      .regex(/^[0-9()-]+$/),
-    isGold: Joi.boolean(),
-  });
-
-  return customerSchema.validate(customer);
-};
-
-const Customer = mongoose.model(
-  "Customer",
-  new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 50,
-    },
-    phone: {
-      type: String,
-      required: true,
-      length: 10,
-    },
-    isGold: {
-      type: Boolean,
-      default: false,
-    },
-  })
-);
+const { Customer, validate } = require("../models/customer");
 
 const router = express.Router();
 
@@ -61,7 +27,7 @@ router.get("/:id", async (req, res) => {
 
 //POST
 router.post("/", async (req, res) => {
-  const { error } = validateCutomer(req.body);
+  const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
 
   const newCustomer = new Customer({
@@ -84,6 +50,9 @@ router.post("/", async (req, res) => {
 
 //PUT
 router.post("/:id", async (req, res) => {
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.message);
+
   const customer = await Customer.findByIdAndUpdate(
     req.params.id,
     {
