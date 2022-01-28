@@ -1,6 +1,7 @@
 const express = require("express");
 const genres = require("./routes/genres");
 const home = require("./routes/home");
+const customers = require("./routes/customers");
 const mongoose = require("mongoose");
 
 mongoose
@@ -18,6 +19,7 @@ app.set("views", "./views"); //default
 app.use("/", home);
 
 app.use("/api/genres", genres);
+app.use("/api/customers", customers);
 
 const PORT = process.env.PORT || 3000;
 

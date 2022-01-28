@@ -18,12 +18,12 @@ const router = express.Router();
 
 //GET
 router.get("/", async (req, res) => {
-  const genres = await Genre.find();
+  const genres = await Genre.find().sort("name");
   res.send(genres);
 });
 
 const getGenreById = async (id) => {
-  return await Genre.findById(id).sort("name");
+  return await Genre.findById(id);
 };
 
 router.get("/:id", async (req, res) => {
