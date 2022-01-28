@@ -4,12 +4,12 @@ const mongoose = require("mongoose");
 
 const validateCutomer = (customer) => {
   const customerSchema = Joi.object({
-    name: Joi.string().min(5).required(),
+    name: Joi.string().min(5).max(50)required(),
     phone: Joi.string()
       .min(10)
       .required()
       .regex(/^[0-9()-]+$/),
-    isGold: Joi.boolean().required(),
+    isGold: Joi.boolean(),
   });
 
   return customerSchema.validate(customer);
