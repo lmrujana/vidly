@@ -36,16 +36,14 @@ router.post("/", async (req, res) => {
     isGold: req.body.isGold,
   });
 
-  let result;
   try {
-    result = await newCustomer.save();
-    console.log(result);
+    await newCustomer.save();
+    console.log(newCustomer);
+    res.send(newCustomer);
   } catch (ex) {
     console.log(ex.message);
     return res.status(400).send(`Failed to saved new customer.`);
   }
-
-  res.send(result);
 });
 
 //PUT

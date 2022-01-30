@@ -37,15 +37,13 @@ router.post("/", async (req, res) => {
     dailyRentalRate: req.body.dailyRentalRate,
   });
 
-  let result;
   try {
-    result = await newMovie.save();
-    console.log(result);
+    await newMovie.save();
+    console.log(newMovie);
+    res.send(newMovie);
   } catch (ex) {
     console.log(ex);
   }
-
-  res.send(result);
 });
 
 //PUT
