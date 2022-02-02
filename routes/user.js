@@ -1,3 +1,5 @@
+const _ = require("lodash");
+const bcrypt = require("bcrypt");
 const express = require("express");
 const { User, validate } = require("../models/user");
 const mongoose = require("mongoose");
@@ -27,16 +29,14 @@ router.post("/", async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
   if (user) return res.status(400).send("Email already registered");
 
-  const newUser = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  });
+  const newUser = new User(_.pick(req.body, ["name", "email", "password"]));
+  const salt = await bcrypt.genSalt(10);
+  newUser.password = await bcrypt.hash(newUser.password, salt);
 
   try {
     await newUser.save();
     console.log(newUser);
-    res.send(newUser);
+    res.send(_.pick(newUser, ["name", "email"]));
   } catch (ex) {
     console.log(ex);
   }
