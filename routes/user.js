@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const { User, validate } = require("../models/user");
 const mongoose = require("mongoose");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //POST
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error)
     return res.status(400).send(`Invalid user. ${error.details[0].message}`);
