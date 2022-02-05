@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { Movie, validate } = require("../models/movies");
 const { Genre } = require("../models/genres");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //POST
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
 
@@ -47,7 +48,7 @@ router.post("/", async (req, res) => {
 });
 
 //PUT
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
 
@@ -69,7 +70,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const movie = await Movie.findByIdAndDelete(req.params.id);
 
   if (!movie)

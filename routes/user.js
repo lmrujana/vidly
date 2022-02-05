@@ -36,7 +36,8 @@ router.post("/", async (req, res) => {
   try {
     await newUser.save();
     console.log(newUser);
-    res.send(_.pick(newUser, ["name", "email"]));
+    const token = newUser.generateAuthToken();
+    res.header("x-auth-token", token).send(_.pick(newUser, ["name", "email"]));
   } catch (ex) {
     console.log(ex);
   }

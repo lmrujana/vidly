@@ -1,16 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const { Customer, validate } = require("../models/customer");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
 //GET
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   const customers = await Customer.find();
   res.send(customers);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   let customer;
   try {
     customer = await Customer.findById(req.params.id);
@@ -26,7 +27,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //POST
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
 
@@ -47,7 +48,7 @@ router.post("/", async (req, res) => {
 });
 
 //PUT
-router.post("/:id", async (req, res) => {
+router.post("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.message);
 
@@ -68,7 +69,7 @@ router.post("/:id", async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const customer = await Customer.findByIdAndDelete(req.params.id);
 
   if (!customer)

@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const { Genre, validate } = require("../models/genres");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -43,7 +44,7 @@ const createGenre = async (reqBod) => {
   }
 };
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const reqBod = req.body;
   const { error } = validate(reqBod);
   if (error) return res.status(400).send(error.message);
@@ -54,7 +55,7 @@ router.post("/", async (req, res) => {
 });
 
 //PUT
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const reqBod = req.body;
   const { error } = validate(reqBod);
   if (error) return res.status(400).send(error.message);
