@@ -13,13 +13,19 @@ router.get("/", async (req, res) => {
   res.send(users);
 });
 
-router.get("/:id", async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user)
-    return res.status(404).send(`No user with id ${req.params.id} found.`);
-
+router.get("/me", auth, async (req, res) => {
+  console.log(req.user);
+  const user = await User.findById(req.user._id).select("-password");
   res.send(user);
 });
+
+// router.get("/:id", async (req, res) => {
+//   const user = await User.findById(req.params.id);
+//   if (!user)
+//     return res.status(404).send(`No user with id ${req.params.id} found.`);
+
+//   res.send(user);
+// });
 
 //POST
 router.post("/", auth, async (req, res) => {
