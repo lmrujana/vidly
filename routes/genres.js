@@ -3,32 +3,39 @@ const mongoose = require("mongoose");
 const { Genre, validate } = require("../models/genres");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const asyncMiddleware = require("../middleware/async");
 
 const router = express.Router();
 
 //GET
-router.get("/", async (req, res) => {
-  const genres = await Genre.find().sort("name");
-  res.send(genres);
-});
+router.get(
+  "/",
+  asyncMiddleware(async (req, res, next) => {
+    const genres = await Genre.find().sort("name");
+    res.send(genres);
+  })
+);
 
 const getGenreById = async (id) => {
   return await Genre.findById(id);
 };
 
-router.get("/:id", async (req, res) => {
-  let genre;
-  try {
-    genre = await getGenreById(req.params.id);
-  } catch (ex) {
-    console.log(ex.message);
-  }
+router.get(
+  "/:id",
+  asyncMiddleware(async (req, res) => {
+    let genre;
+    try {
+      genre = await getGenreById(req.params.id);
+    } catch (ex) {
+      console.log(ex.message);
+    }
 
-  if (!genre)
-    return res.status(404).send(`No genre with id ${req.params.id} found...`);
+    if (!genre)
+      return res.status(404).send(`No genre with id ${req.params.id} found...`);
 
-  res.send(genre);
-});
+    res.send(genre);
+  })
+);
 
 //POST
 const createGenre = async (reqBod) => {
@@ -45,42 +52,54 @@ const createGenre = async (reqBod) => {
   }
 };
 
-router.post("/", auth, async (req, res) => {
-  const reqBod = req.body;
-  const { error } = validate(reqBod);
-  if (error) return res.status(400).send(error.message);
+router.post(
+  "/",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    const reqBod = req.body;
+    const { error } = validate(reqBod);
+    if (error) return res.status(400).send(error.message);
 
-  const newGenre = await createGenre(reqBod);
+    const newGenre = await createGenre(reqBod);
 
-  res.send(newGenre);
-});
+    res.send(newGenre);
+  })
+);
 
 //PUT
-router.put("/:id", auth, async (req, res) => {
-  const reqBod = req.body;
-  const { error } = validate(reqBod);
-  if (error) return res.status(400).send(error.message);
+router.put(
+  "/:id",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    const reqBod = req.body;
+    const { error } = validate(reqBod);
+    if (error) return res.status(400).send(error.message);
 
-  const genre = await Genre.findByIdAndUpdate(
-    req.params.id,
-    { name: req.body.name },
-    { new: true }
-  );
+    const genre = await Genre.findByIdAndUpdate(
+      req.params.id,
+      { name: req.body.name },
+      { new: true }
+    );
 
-  if (!genre) {
-    res.status(404).send(`No genre with id ${req.params.id} found...`);
-  }
+    if (!genre) {
+      res.status(404).send(`No genre with id ${req.params.id} found...`);
+    }
 
-  res.send(genre);
-});
+    res.send(genre);
+  })
+);
 
 // DELETE
-router.delete("/:id", [auth, admin], async (req, res) => {
-  const genre = await Genre.findByIdAndDelete(req.params.id);
-  if (!genre)
-    return res.status(404).send(`No genre with id ${req.params.id} found...`);
+router.delete(
+  "/:id",
+  [auth, admin],
+  asyncMiddleware(async (req, res) => {
+    const genre = await Genre.findByIdAndDelete(req.params.id);
+    if (!genre)
+      return res.status(404).send(`No genre with id ${req.params.id} found...`);
 
-  res.send(genre);
-});
+    res.send(genre);
+  })
+);
 
 module.exports = router;
