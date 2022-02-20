@@ -1,3 +1,4 @@
+require("express-async-errors");
 const express = require("express");
 const genres = require("./routes/genres");
 const home = require("./routes/home");
